@@ -14,7 +14,19 @@ import createSagaMiddleware from 'redux-saga';
 import { takeEvery, put } from 'redux-saga/effects';
 
 function* rootSaga() {
+  yield takeEvery('FETCH_ALL_GAMES', fetchAllGames)
   yield takeEvery('FETCH_NEWS', fetchNews);
+}
+
+//////////  SAGAS  //////////
+
+function* fetchAllGames() {
+  try {
+    const response = yield Axios.get('/api/steam');
+    yield put({ type: 'SET_GAMES', payload: response.data.applist.apps });
+  } catch (error) {
+    alert('Unable to retrieve games from server.');
+  }
 }
 
 function* fetchNews(action) {
@@ -22,7 +34,18 @@ function* fetchNews(action) {
     const response = yield Axios.get(`/api/steam/${action.payload}`);
     yield put({ type: 'SET_NEWS', payload: response.data.appnews });
   } catch (error) {
-    alert('Unable to retrieve movies from server.');
+    alert('Unable to retrieve news from server.');
+  }
+}
+
+//////////  REDUCERS  //////////
+
+const games = (state = [], action) => {
+  switch (action.type) {
+    case 'SET_GAMES':
+      return [...action.payload];
+    default:
+      return state;
   }
 }
 
@@ -39,6 +62,7 @@ const sagaMiddleware = createSagaMiddleware();
 
 const storeInstance = createStore(
   combineReducers({
+    games,
     news,
   }),
   // Add sagaMiddleware to our store

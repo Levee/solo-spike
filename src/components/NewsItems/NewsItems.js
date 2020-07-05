@@ -1,9 +1,10 @@
-import React, { Component } from 'react';
+import React from 'react';
 import { connect } from 'react-redux';
 
-class NewsItems extends Component {
+class NewsItems extends React.Component {
   render() {
     const { news } = this.props;
+    // const renderHTML = (escapedHTML: string) => React.createElement("div", { dangerouslySetInnerHTML: { __html: escapedHTML } });
     return (
       <>
         <h2>AppID: {news.appid}</h2>
@@ -13,6 +14,7 @@ class NewsItems extends Component {
               <h1>{x.title}</h1>
               <p>Author: {x.author}</p>
               <a href={x.url}>View post on steam</a>
+              {/* <p>{renderHTML(x.contents)}</p> */}
               <p>{x.contents}</p>
             </div>
           )

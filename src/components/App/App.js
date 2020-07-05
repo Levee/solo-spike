@@ -9,7 +9,7 @@ function App() {
       <header className="App-header">
         <img src={logo} className="App-logo" alt="logo" />
         <h2>
-          Discord API Solo Spike
+          Steam Web API Solo Spike
         </h2>
       </header>
       <News />
