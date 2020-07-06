@@ -7,6 +7,7 @@ class News extends Component {
   state = {
     name: '',
     id: '',
+    count: '',
   }
 
   componentDidMount = () => {
@@ -28,15 +29,16 @@ class News extends Component {
 
   getNews = () => {
     console.log(this.state.id);
-    this.props.dispatch({ type: 'FETCH_NEWS', payload: this.state.id });
+    this.props.dispatch({ type: 'FETCH_NEWS', payload: {id: this.state.id, count: this.state.count} });
   }
 
   render() {
     const { search, news } = this.props;
     return (
       <>
-        <input type="text" name="game" list="game-titles" onChange={this.getGameId} />
-        <datalist id="game-titles">
+        <input type='text' name='game' list='game-titles' onChange={this.getGameId} />
+        <input type='number' value={this.state.count} onChange={e => this.setState({ count: e.target.value })} />
+        <datalist id='game-titles'>
           {
             search.map((game, i) =>
               <option

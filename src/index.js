@@ -40,7 +40,7 @@ function* fetchSearchResults(action) {
 
 function* fetchNews(action) {
   try {
-    const response = yield Axios.get(`/api/steam/${action.payload}`);
+    const response = yield Axios.get(`/api/steam/${action.payload.id}/${action.payload.count}`);
     yield put({ type: 'SET_NEWS', payload: response.data.appnews });
   } catch (error) {
     alert('Unable to retrieve news from server.');
