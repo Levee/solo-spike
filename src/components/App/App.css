@@ -58,3 +58,9 @@ button {
   color: black;
   overflow-wrap: break-word;
 }
+
+img {
+  max-width: 100%;
+  height: auto;
+  border-radius: 10px;
+}

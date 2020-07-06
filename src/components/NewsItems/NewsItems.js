@@ -4,7 +4,7 @@ import { connect } from 'react-redux';
 class NewsItems extends React.Component {
   render() {
     const { news } = this.props;
-    // const renderHTML = (escapedHTML: string) => React.createElement("div", { dangerouslySetInnerHTML: { __html: escapedHTML } });
+    const renderHTML = (escapedHTML: string) => React.createElement("div", { dangerouslySetInnerHTML: { __html: escapedHTML } });
     return (
       <>
         <h2>AppID: {news.appid}</h2>
@@ -13,9 +13,18 @@ class NewsItems extends React.Component {
             <div className='news-item' key={i}>
               <h1>{x.title}</h1>
               <p>Author: {x.author}</p>
-              <a href={x.url}>View post on steam</a>
-              {/* <p>{renderHTML(x.contents)}</p> */}
-              <p>{x.contents}</p>
+              <a href={x.url}>View post on steam</a><br />
+              <div>{
+                renderHTML(
+                  x.contents
+                    .replace(/\[/g, '<')
+                    .replace(/\]/g, '>')
+                    .replace(/<a/g, '<a target="_blank" ')
+                    // .replace(/<list>/g, '<ul>')
+                    // .replace(/<*>/g, '<li>')
+                    // .replace(/<\/list>/g, '</list>')
+                )
+              }</div>
             </div>
           )
         }

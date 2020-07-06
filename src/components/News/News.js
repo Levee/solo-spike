@@ -1,38 +1,54 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import NewsItems from '../NewsItems/NewsItems';
+import fuzzysort from 'fuzzysort';
 
 class News extends Component {
   state = {
     name: '',
+    id: '',
   }
 
   componentDidMount = () => {
     this.props.dispatch({ type: 'FETCH_ALL_GAMES' });
   }
 
-  getGameId = (input) => {
-    const { games } = this.props;
-    for(let i = 0; i < games.length; i++) {
-      if(input === games[i].name || Number(input) === games[i].appid) {
-        return games[i].appid;
-      }
+  getGameId = (event) => {
+    const { games, dispatch } = this.props;
+    const results = fuzzysort.go(event.target.value, games, { threshold: -Infinity, limit: 15, allowTypo: true, key: 'name' });
+    console.log(results);
+    if (!event || !results.total) {
+      return;
+    } else {
+      dispatch({ type: 'FETCH_SEARCH_RESULTS', payload: [...results] });
+      this.setState({ id: results[0].obj.appid });
+      return results[0].obj.appid;
     }
   }
 
-  getInfo = () => {
-    this.props.dispatch({ type: 'FETCH_NEWS', payload: this.getGameId(this.state.name) });
-    this.setState({ name: '' });
+  getNews = () => {
+    console.log(this.state.id);
+    this.props.dispatch({ type: 'FETCH_NEWS', payload: this.state.id });
   }
 
-  setName = (e) => this.setState({ name: e.target.value });
-
   render() {
-    const { news } = this.props;
+    const { search, news } = this.props;
     return (
       <>
-        <input onChange={this.setName} type='text' value={this.state.name} />
-        <button onClick={this.getInfo}>Get Game News!</button><br />
+        <input type="text" name="game" list="game-titles" onChange={this.getGameId} />
+        <datalist id="game-titles">
+          {
+            search.map((game, i) =>
+              <option
+                onSelect={() => this.setState({ name: game.obj.name, id: game.obj.appid })}
+                key={i}
+              >
+                {game.obj.name}
+              </option>
+            )
+          }
+        </datalist>
+        <button onClick={this.getNews}>Get Game News!</button><br />
         {news === null ? <h3>Enter an app ID above to get the latest news on a game!</h3> : <NewsItems />}
       </>
     )
@@ -42,6 +58,7 @@ class News extends Component {
 const mapStateToProps = (state) => {
   return {
     games: state.games,
+    search: state.search,
     news: state.news,
   }
 }
